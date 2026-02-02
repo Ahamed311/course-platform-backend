@@ -59,8 +59,37 @@ async function bootstrap() {
         'http://192.168.1.65:3000'
       ];
 
+  // Fonction pour valider les origines Vercel
+  const isValidOrigin = (origin: string) => {
+    if (!origin) return false;
+    
+    // Autoriser localhost pour le développement
+    if (origin.includes('localhost') || origin.includes('127.0.0.1')) {
+      return true;
+    }
+    
+    // Autoriser toutes les URLs Vercel du projet
+    if (origin.includes('vercel.app') && 
+        (origin.includes('course-platform') || origin.includes('ahamed-seidous-projects'))) {
+      return true;
+    }
+    
+    // Autoriser les origines configurées
+    return corsOrigins.includes(origin);
+  };
+
   app.enableCors({
-    origin: corsOrigins,
+    origin: (origin, callback) => {
+      // Autoriser les requêtes sans origine (Postman, mobile apps, etc.)
+      if (!origin) return callback(null, true);
+      
+      if (isValidOrigin(origin)) {
+        callback(null, true);
+      } else {
+        logger.warn(`🚫 CORS blocked origin: ${origin}`);
+        callback(new Error('Not allowed by CORS'));
+      }
+    },
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
     allowedHeaders: ['Content-Type', 'Authorization'],
     credentials: true,
