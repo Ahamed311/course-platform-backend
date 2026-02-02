@@ -49,10 +49,11 @@ export class AuthService {
     const user = await this.usersService.create({
       email: registerDto.email,
       password: hashedPassword,
-      name: registerDto.name,
+      name: registerDto.name || undefined,
     });
 
-    const { password, ...result } = user;
+    // Le password n'existe pas dans le type retourné par Prisma
+    const { ...result } = user;
     return result;
   }
 }

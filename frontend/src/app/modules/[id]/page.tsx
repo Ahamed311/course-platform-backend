@@ -30,11 +30,11 @@ export default async function ModulePage({
   return (
     <div className="min-h-screen bg-slate-50">
       <Header 
-        title={`Module #${moduleId}`}
+        title={`Module ${moduleId}`}
         subtitle="Explorez les cours de ce module"
         breadcrumbs={[
           { label: "Modules", href: "/" },
-          { label: `Module #${moduleId}` }
+          { label: `Module ${moduleId}` }
         ]}
       />
       

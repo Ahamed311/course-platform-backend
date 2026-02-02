@@ -7,10 +7,27 @@ import Badge from "@/components/Badge";
 
 export default async function Home() {
   let modules: Module[] = [];
+  let totalCourses = 0;
+  let totalQuizzes = 0;
   let error = null;
 
   try {
+    // Récupérer les modules
     modules = await api.modules.list();
+    
+    // Récupérer les cours
+    const coursesResponse = await fetch('http://localhost:3001/courses');
+    if (coursesResponse.ok) {
+      const courses = await coursesResponse.json();
+      totalCourses = courses.length;
+    }
+    
+    // Récupérer les quiz
+    const quizzesResponse = await fetch('http://localhost:3001/quiz');
+    if (quizzesResponse.ok) {
+      const quizzes = await quizzesResponse.json();
+      totalQuizzes = quizzes.length;
+    }
   } catch (err: any) {
     error = err.message;
   }
@@ -18,8 +35,8 @@ export default async function Home() {
   return (
     <div className="min-h-screen bg-slate-50">
       <Header 
-        title="Modules de formation"
-        subtitle="Découvrez nos parcours d'apprentissage structurés"
+        title="Plateforme d'apprentissage"
+        subtitle="Développez vos compétences avec nos modules de formation"
       />
       
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
@@ -81,7 +98,7 @@ export default async function Home() {
                     </svg>
                   </div>
                   <div>
-                    <p className="text-2xl font-bold text-slate-900">∞</p>
+                    <p className="text-2xl font-bold text-slate-900">{totalCourses}</p>
                     <p className="text-sm text-slate-600">Cours disponibles</p>
                   </div>
                 </div>
@@ -95,7 +112,7 @@ export default async function Home() {
                     </svg>
                   </div>
                   <div>
-                    <p className="text-2xl font-bold text-slate-900">∞</p>
+                    <p className="text-2xl font-bold text-slate-900">{totalQuizzes}</p>
                     <p className="text-sm text-slate-600">Quiz interactifs</p>
                   </div>
                 </div>

@@ -45,11 +45,7 @@ export default function Footer() {
           <p className="text-sm text-slate-500">
             © 2026 EduPlatform. Plateforme de cours moderne.
           </p>
-          <div className="flex items-center space-x-4 mt-4 sm:mt-0">
-            <span className="text-xs text-slate-400">
-              Construit avec ❤️ et TypeScript
-            </span>
-          </div>
+          
         </div>
       </div>
     </footer>

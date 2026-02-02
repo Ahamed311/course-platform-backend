@@ -55,7 +55,7 @@ async function main() {
 
 JavaScript est un langage de programmation dynamique et polyvalent, principalement utilisé pour le développement web. Créé en 1995 par Brendan Eich, JavaScript est devenu l'un des langages les plus populaires au monde.
 
-## Qu'est-ce que JavaScript ?
+Qu'est-ce que JavaScript ?
 
 JavaScript est un langage de programmation interprété qui permet d'ajouter de l'interactivité aux pages web. Contrairement à HTML qui structure le contenu et CSS qui le stylise, JavaScript donne vie aux pages web.
 

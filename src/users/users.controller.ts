@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Param, Post, Put, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, Param, Post, Put, UseGuards, Delete, Query, Patch } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
@@ -10,6 +10,8 @@ import { User } from '../auth/decorators/user.decorator';
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles('ADMIN')
   @Post()
   create(@Body() dto: CreateUserDto) {
     return this.usersService.create(dto);
@@ -18,8 +20,8 @@ export class UsersController {
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles('ADMIN')
   @Get()
-  findAll() {
-    return this.usersService.findAll();
+  findAll(@Query() query: any) {
+    return this.usersService.findAll(query);
   }
 
   @UseGuards(JwtAuthGuard, RolesGuard)
@@ -27,6 +29,13 @@ export class UsersController {
   @Get('stats')
   getStats() {
     return this.usersService.getStats();
+  }
+
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles('ADMIN')
+  @Get('detailed-stats')
+  getDetailedStats() {
+    return this.usersService.getDetailedStats();
   }
 
   @UseGuards(JwtAuthGuard)
@@ -47,8 +56,43 @@ export class UsersController {
 
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles('ADMIN')
+  @Get(':id/quiz-results')
+  getUserQuizResults(@Param('id') id: string) {
+    return this.usersService.getUserQuizResults(Number(id));
+  }
+
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles('ADMIN')
   @Put(':id/status')
   updateStatus(@Param('id') id: string, @Body() body: { isActive: boolean }) {
     return this.usersService.updateUserStatus(Number(id), body.isActive);
+  }
+
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles('ADMIN')
+  @Put(':id/role')
+  updateRole(@Param('id') id: string, @Body() body: { role: string }) {
+    return this.usersService.updateRole(Number(id), body.role);
+  }
+
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles('ADMIN')
+  @Patch(':id')
+  update(@Param('id') id: string, @Body() updateUserDto: any) {
+    return this.usersService.update(Number(id), updateUserDto);
+  }
+
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles('ADMIN')
+  @Delete(':id')
+  remove(@Param('id') id: string) {
+    return this.usersService.remove(Number(id));
+  }
+
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles('ADMIN')
+  @Delete(':id/quiz-results')
+  resetUserProgress(@Param('id') id: string) {
+    return this.usersService.resetUserProgress(Number(id));
   }
 }

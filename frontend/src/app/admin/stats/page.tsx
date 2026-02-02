@@ -2,7 +2,8 @@
 
 import { useState, useEffect } from 'react';
 import Header from '@/components/Header';
-import Card, { CardHeader, CardContent } from '@/components/Card';
+import Card from '@/components/Card';
+import Badge from '@/components/Badge';
 import ProtectedRoute from '@/components/ProtectedRoute';
 
 interface Stats {
@@ -17,6 +18,25 @@ interface Stats {
     totalResults: number;
     averageScore: number;
   };
+}
+
+// Composants Card manquants
+function CardHeader({ title, subtitle, icon }: { title: string; subtitle: string; icon: React.ReactNode }) {
+  return (
+    <div className="flex items-center justify-between p-6 border-b border-gray-200">
+      <div>
+        <h3 className="text-lg font-medium text-gray-900">{title}</h3>
+        <p className="text-sm text-gray-600">{subtitle}</p>
+      </div>
+      <div className="flex-shrink-0">
+        {icon}
+      </div>
+    </div>
+  );
+}
+
+function CardContent({ children }: { children: React.ReactNode }) {
+  return <div className="p-6">{children}</div>;
 }
 
 function StatsContent() {

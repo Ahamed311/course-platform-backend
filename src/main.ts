@@ -7,7 +7,11 @@ async function bootstrap() {
 
   // Configuration CORS plus permissive
   app.enableCors({
-    origin: ['http://localhost:3000', 'http://127.0.0.1:3000'],
+    origin: [
+      'http://localhost:3000', 
+      'http://127.0.0.1:3000',
+      'http://192.168.1.65:3000'  // Ajout de votre IP locale
+    ],
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
     allowedHeaders: ['Content-Type', 'Authorization'],
     credentials: true,

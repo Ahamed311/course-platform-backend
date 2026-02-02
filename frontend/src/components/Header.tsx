@@ -1,24 +1,72 @@
 'use client';
 
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
+import { useRouter, usePathname } from 'next/navigation';
+import { useState, useEffect } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
+import { useNavigation } from '@/hooks/useNavigation';
 import Button from './Button';
+import ConfirmModal from './ConfirmModal';
 
 interface HeaderProps {
   title?: string;
   subtitle?: string;
   breadcrumbs?: Array<{ label: string; href?: string }>;
   actions?: React.ReactNode;
+  showBackButton?: boolean;
 }
 
-export default function Header({ title, subtitle, breadcrumbs, actions }: HeaderProps) {
+export default function Header({ title, subtitle, breadcrumbs, actions, showBackButton = false }: HeaderProps) {
   const { user, logout } = useAuth();
   const router = useRouter();
+  const pathname = usePathname();
+  const { goBack, addToHistory, canGoBack, previousPage } = useNavigation();
+  const [showLogoutModal, setShowLogoutModal] = useState(false);
+
+  // Ajouter la page actuelle à l'historique
+  useEffect(() => {
+    if (pathname) {
+      addToHistory(pathname);
+    }
+  }, [pathname, addToHistory]);
 
   const handleLogout = () => {
+    setShowLogoutModal(true);
+  };
+
+  const confirmLogout = () => {
     logout();
-    router.push('/');
+    router.push('/login');
+  };
+
+  const handleBackClick = () => {
+    goBack();
+  };
+
+  const getPageTitle = (path: string) => {
+    const titles: { [key: string]: string } = {
+      '/': 'Accueil',
+      '/profile': 'Profil',
+      '/admin': 'Administration',
+      '/admin/create-module': 'Créer un module',
+      '/admin/create-course': 'Créer un cours',
+      '/admin/create-user': 'Créer un utilisateur',
+      '/admin/stats': 'Statistiques',
+      '/modules': 'Modules',
+      '/courses': 'Cours',
+      '/quiz': 'Quiz',
+      '/diagnostic': 'Test de niveau',
+      '/login': 'Connexion',
+      '/register': 'Inscription'
+    };
+    
+    // Gérer les routes dynamiques
+    if (path.includes('/modules/')) return 'Module';
+    if (path.includes('/courses/')) return 'Cours';
+    if (path.includes('/quiz/')) return 'Quiz';
+    if (path.includes('/admin/edit-module/')) return 'Modifier le module';
+    
+    return titles[path] || 'Page';
   };
 
   return (
@@ -40,6 +88,24 @@ export default function Header({ title, subtitle, breadcrumbs, actions }: Header
                 <p className="text-xs text-slate-500 -mt-1">Plateforme d'apprentissage</p>
               </div>
             </Link>
+
+            {/* Bouton de retour intelligent */}
+            {(showBackButton || (canGoBack && pathname !== '/')) && (
+              <Button 
+                variant="ghost" 
+                size="sm" 
+                onClick={handleBackClick}
+                className="flex items-center space-x-2 text-slate-600 hover:text-slate-900"
+              >
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+                </svg>
+                <span className="hidden sm:inline">
+                  {previousPage ? `Retour à ${getPageTitle(previousPage.path)}` : 'Retour'}
+                </span>
+                <span className="sm:hidden">Retour</span>
+              </Button>
+            )}
           </div>
 
           {/* Actions et authentification */}
@@ -134,6 +200,18 @@ export default function Header({ title, subtitle, breadcrumbs, actions }: Header
           </div>
         )}
       </div>
+
+      {/* Modal de confirmation de déconnexion */}
+      <ConfirmModal
+        isOpen={showLogoutModal}
+        onClose={() => setShowLogoutModal(false)}
+        onConfirm={confirmLogout}
+        title="Confirmer la déconnexion"
+        message="Êtes-vous sûr ?"
+        confirmText="Se déconnecter"
+        cancelText="Annuler"
+        type="warning"
+      />
     </header>
   );
 }
