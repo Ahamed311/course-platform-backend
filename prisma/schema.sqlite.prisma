@@ -1,0 +1,86 @@
+// Schéma Prisma pour SQLite (production locale)
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model Module {
+  id          Int      @id @default(autoincrement())
+  title       String
+  description String?
+  courses     Course[]
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model Course {
+  id          Int      @id @default(autoincrement())
+  title       String
+  content     String
+  moduleId    Int
+  module      Module   @relation(fields: [moduleId], references: [id], onDelete: Cascade)
+  quizzes     Quiz[]
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model Quiz {
+  id          Int           @id @default(autoincrement())
+  title       String
+  courseId    Int
+  course      Course        @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  questions   Question[]
+  results     QuizResult[]
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+}
+
+model Question {
+  id        Int      @id @default(autoincrement())
+  text      String
+  quizId    Int
+  quiz      Quiz     @relation(fields: [quizId], references: [id], onDelete: Cascade)
+  options   Option[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Option {
+  id         Int      @id @default(autoincrement())
+  text       String
+  isCorrect  Boolean  @default(false)
+  questionId Int
+  question   Question @relation(fields: [questionId], references: [id], onDelete: Cascade)
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+}
+
+model User {
+  id          Int          @id @default(autoincrement())
+  email       String       @unique
+  name        String?
+  password    String
+  role        String       @default("STUDENT") // STUDENT ou ADMIN
+  isActive    Boolean      @default(true)
+  quizResults QuizResult[]
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+}
+
+model QuizResult {
+  id        Int      @id @default(autoincrement())
+  score     Int
+  total     Int
+  userId    Int
+  quizId    Int
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  quiz      Quiz     @relation(fields: [quizId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([userId, quizId])
+}

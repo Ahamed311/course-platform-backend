@@ -1,0 +1,30 @@
+services:
+  - type: web
+    name: eduplatform-backend
+    env: node
+    plan: free
+    buildCommand: npm install && npx prisma generate && npm run build
+    startCommand: npm run start:prod
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: JWT_SECRET
+        generateValue: true
+      - key: JWT_EXPIRES_IN
+        value: 7d
+      - key: BCRYPT_ROUNDS
+        value: 12
+      - key: LOG_LEVEL
+        value: error
+      - key: CORS_ORIGINS
+        value: https://course-platform-frontend.vercel.app,http://localhost:3000
+      - key: DATABASE_URL
+        fromDatabase:
+          name: eduplatform-db
+          property: connectionString
+
+databases:
+  - name: eduplatform-db
+    plan: free
+    databaseName: eduplatform
+    user: eduplatform_user
