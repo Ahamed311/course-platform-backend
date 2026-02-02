@@ -14,4 +14,9 @@ export class AppController {
   health() {
     return { status: 'ok', api: 'course-platform' };
   }
+
+  @Get('debug')
+  async debug() {
+    return this.appService.getDebugInfo();
+  }
 }
