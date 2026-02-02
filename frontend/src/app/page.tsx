@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { api, Module } from "@/lib/api";
+import { buildApiUrl } from "@/lib/config";
 import Header from "@/components/Header";
 import Card, { CardHeader, CardContent, CardFooter } from "@/components/Card";
 import Button from "@/components/Button";
@@ -16,14 +17,14 @@ export default async function Home() {
     modules = await api.modules.list();
     
     // Récupérer les cours
-    const coursesResponse = await fetch('http://localhost:3001/courses');
+    const coursesResponse = await fetch(buildApiUrl('/courses'));
     if (coursesResponse.ok) {
       const courses = await coursesResponse.json();
       totalCourses = courses.length;
     }
     
     // Récupérer les quiz
-    const quizzesResponse = await fetch('http://localhost:3001/quiz');
+    const quizzesResponse = await fetch(buildApiUrl('/quiz'));
     if (quizzesResponse.ok) {
       const quizzes = await quizzesResponse.json();
       totalQuizzes = quizzes.length;

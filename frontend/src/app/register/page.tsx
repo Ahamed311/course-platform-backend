@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { useAuth } from '@/contexts/AuthContext';
+import { buildApiUrl } from '@/lib/config';
 import Button from '@/components/Button';
 import Card from '@/components/Card';
 import Header from '@/components/Header';
@@ -61,7 +62,7 @@ export default function RegisterPage() {
 
     try {
       // Register the user
-      const registerResponse = await fetch('http://localhost:3001/auth/register', {
+      const registerResponse = await fetch(buildApiUrl('/auth/register'), {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -75,7 +76,7 @@ export default function RegisterPage() {
       }
 
       // Automatically log in the user after successful registration
-      const loginResponse = await fetch('http://localhost:3001/auth/login', {
+      const loginResponse = await fetch(buildApiUrl('/auth/login'), {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

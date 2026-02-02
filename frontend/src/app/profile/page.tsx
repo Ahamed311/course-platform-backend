@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/contexts/AuthContext';
+import { buildApiUrl, getAuthHeaders } from '@/lib/config';
 import Header from '@/components/Header';
 import Card, { CardHeader, CardContent } from '@/components/Card';
 import Button from '@/components/Button';
@@ -73,14 +74,14 @@ export default function ProfilePage() {
       
       // Récupérer les vraies statistiques
       const [modulesRes, coursesRes, quizzesRes, usersRes] = await Promise.all([
-        fetch('http://localhost:3001/modules', {
-          headers: { 'Authorization': `Bearer ${token}` }
+        fetch(buildApiUrl('/modules'), {
+          headers: getAuthHeaders()
         }),
-        fetch('http://localhost:3001/courses', {
-          headers: { 'Authorization': `Bearer ${token}` }
+        fetch(buildApiUrl('/courses'), {
+          headers: getAuthHeaders()
         }),
-        fetch('http://localhost:3001/quiz', {
-          headers: { 'Authorization': `Bearer ${token}` }
+        fetch(buildApiUrl('/quiz'), {
+          headers: getAuthHeaders()
         }),
         // Simuler l'endpoint users (à créer si nécessaire)
         Promise.resolve({ json: () => Promise.resolve([]) })
@@ -91,8 +92,8 @@ export default function ProfilePage() {
       const quizzes = await quizzesRes.json();
 
       // Récupérer les résultats récents de quiz pour l'activité
-      const resultsRes = await fetch('http://localhost:3001/quiz/results', {
-        headers: { 'Authorization': `Bearer ${token}` }
+      const resultsRes = await fetch(buildApiUrl('/quiz/results'), {
+        headers: getAuthHeaders()
       });
       
       let recentResults = [];
@@ -149,11 +150,8 @@ export default function ProfilePage() {
 
   const fetchUserResults = async () => {
     try {
-      const token = localStorage.getItem('token');
-      const response = await fetch(`http://localhost:3001/quiz/results/user/${user?.id}`, {
-        headers: {
-          'Authorization': `Bearer ${token}`,
-        },
+      const response = await fetch(buildApiUrl(`/quiz/results/user/${user?.id}`), {
+        headers: getAuthHeaders(),
       });
 
       if (response.ok) {

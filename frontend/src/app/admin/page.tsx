@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
+import { buildApiUrl, getAuthHeaders } from '@/lib/config';
 import Header from '@/components/Header';
 import Card from '@/components/Card';
 import Button from '@/components/Button';
@@ -68,19 +69,19 @@ function AdminContent() {
       const token = localStorage.getItem('token');
       
       // Load users
-      const usersResponse = await fetch('http://localhost:3001/users', {
-        headers: { 'Authorization': `Bearer ${token}` },
+      const usersResponse = await fetch(buildApiUrl('/users'), {
+        headers: getAuthHeaders(),
       });
       const usersData = await usersResponse.json();
       
       // Load stats
-      const statsResponse = await fetch('http://localhost:3001/users/stats', {
-        headers: { 'Authorization': `Bearer ${token}` },
+      const statsResponse = await fetch(buildApiUrl('/users/stats'), {
+        headers: getAuthHeaders(),
       });
       const statsData = await statsResponse.json();
       
       // Load modules
-      const modulesResponse = await fetch('http://localhost:3001/modules');
+      const modulesResponse = await fetch(buildApiUrl('/modules'));
       const modulesData = await modulesResponse.json();
       
       setUsers(usersData.users || usersData);
@@ -99,38 +100,32 @@ function AdminContent() {
       
       switch (action) {
         case 'toggle-status':
-          await fetch(`http://localhost:3001/users/${userId}/status`, {
+          await fetch(buildApiUrl(`/users/${userId}/status`), {
             method: 'PUT',
-            headers: {
-              'Content-Type': 'application/json',
-              'Authorization': `Bearer ${token}`,
-            },
+            headers: getAuthHeaders(),
             body: JSON.stringify({ isActive: !data.isActive }),
           });
           break;
         case 'change-role':
-          await fetch(`http://localhost:3001/users/${userId}/role`, {
+          await fetch(buildApiUrl(`/users/${userId}/role`), {
             method: 'PUT',
-            headers: {
-              'Content-Type': 'application/json',
-              'Authorization': `Bearer ${token}`,
-            },
+            headers: getAuthHeaders(),
             body: JSON.stringify({ role: data.role }),
           });
           break;
         case 'delete':
           if (confirm('Êtes-vous sûr de vouloir supprimer cet utilisateur ?')) {
-            await fetch(`http://localhost:3001/users/${userId}`, {
+            await fetch(buildApiUrl(`/users/${userId}`), {
               method: 'DELETE',
-              headers: { 'Authorization': `Bearer ${token}` },
+              headers: getAuthHeaders(),
             });
           }
           break;
         case 'reset-progress':
           if (confirm('Êtes-vous sûr de vouloir réinitialiser les progrès de cet utilisateur ?')) {
-            await fetch(`http://localhost:3001/users/${userId}/quiz-results`, {
+            await fetch(buildApiUrl(`/users/${userId}/quiz-results`), {
               method: 'DELETE',
-              headers: { 'Authorization': `Bearer ${token}` },
+              headers: getAuthHeaders(),
             });
           }
           break;
@@ -562,9 +557,9 @@ function AdminContent() {
                           if (confirm(`Êtes-vous sûr de vouloir supprimer le module "${module.title}" ?`)) {
                             try {
                               const token = localStorage.getItem('token');
-                              await fetch(`http://localhost:3001/modules/${module.id}`, {
+                              await fetch(buildApiUrl(`/modules/${module.id}`), {
                                 method: 'DELETE',
-                                headers: { 'Authorization': `Bearer ${token}` },
+                                headers: getAuthHeaders(),
                               });
                               loadData(); // Recharger les données
                             } catch (err) {

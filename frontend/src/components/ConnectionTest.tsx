@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { buildApiUrl } from '@/lib/config';
 import Button from './Button';
 import Card, { CardHeader, CardContent } from './Card';
 
@@ -29,7 +30,7 @@ export default function ConnectionTest() {
     
     // Test 1: Connexion de base
     try {
-      const response = await fetch('http://localhost:3001/modules');
+      const response = await fetch(buildApiUrl('/modules'));
       if (response.ok) {
         const data = await response.json();
         updateTest(0, 'success', `Backend accessible - ${data.length} modules trouvés`);
@@ -42,7 +43,7 @@ export default function ConnectionTest() {
 
     // Test 2: API Modules
     try {
-      const response = await fetch('http://localhost:3001/modules');
+      const response = await fetch(buildApiUrl('/modules'));
       if (response.ok) {
         const data = await response.json();
         updateTest(1, 'success', `${data.length} modules chargés`);
@@ -55,7 +56,7 @@ export default function ConnectionTest() {
 
     // Test 3: Authentification
     try {
-      const response = await fetch('http://localhost:3001/auth/login', {
+      const response = await fetch(buildApiUrl('/auth/login'), {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({

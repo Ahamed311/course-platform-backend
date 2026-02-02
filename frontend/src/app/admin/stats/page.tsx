@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { buildApiUrl, getAuthHeaders } from '@/lib/config';
 import Header from '@/components/Header';
 import Card from '@/components/Card';
 import Badge from '@/components/Badge';
@@ -50,11 +51,8 @@ function StatsContent() {
 
   const fetchStats = async () => {
     try {
-      const token = localStorage.getItem('token');
-      const response = await fetch('http://localhost:3001/users/stats', {
-        headers: {
-          'Authorization': `Bearer ${token}`,
-        },
+      const response = await fetch(buildApiUrl('/users/stats'), {
+        headers: getAuthHeaders(),
       });
 
       if (!response.ok) {

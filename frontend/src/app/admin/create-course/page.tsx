@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
+import { buildApiUrl, getAuthHeaders } from '@/lib/config';
 import Header from '@/components/Header';
 import Card from '@/components/Card';
 import Button from '@/components/Button';
@@ -33,7 +34,7 @@ function CreateCourseContent() {
 
   const loadModules = async () => {
     try {
-      const response = await fetch('http://localhost:3001/modules');
+      const response = await fetch(buildApiUrl('/modules'));
       const modulesData = await response.json();
       setModules(modulesData);
     } catch (err) {
@@ -47,13 +48,9 @@ function CreateCourseContent() {
     setError('');
 
     try {
-      const token = localStorage.getItem('token');
-      const response = await fetch('http://localhost:3001/courses', {
+      const response = await fetch(buildApiUrl('/courses'), {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`,
-        },
+        headers: getAuthHeaders(),
         body: JSON.stringify(formData),
       });
 

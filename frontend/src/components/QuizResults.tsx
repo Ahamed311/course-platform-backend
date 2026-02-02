@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { api } from '@/lib/api';
+import { buildApiUrl } from '@/lib/config';
 
 interface QuizResultsProps {
   quizId: number;
@@ -25,7 +26,7 @@ export default function QuizResults({ quizId, userId = 1 }: QuizResultsProps) {
     const fetchResults = async () => {
       try {
         // Cette route devra être implémentée dans le backend
-        const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001'}/quiz/${quizId}/results?userId=${userId}`);
+        const response = await fetch(buildApiUrl(`/quiz/${quizId}/results?userId=${userId}`));
         if (response.ok) {
           const data = await response.json();
           setResults(data);

@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
+import { buildApiUrl, getAuthHeaders } from '@/lib/config';
 import Header from '@/components/Header';
 import Card from '@/components/Card';
 import Button from '@/components/Button';
@@ -766,12 +767,9 @@ Félicitations pour votre parcours d'apprentissage !`
       const token = localStorage.getItem('token');
       
       // 1. Créer le module
-      const moduleResponse = await fetch('http://localhost:3001/modules', {
+      const moduleResponse = await fetch(buildApiUrl('/modules'), {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`,
-        },
+        headers: getAuthHeaders(),
         body: JSON.stringify({
           title: formData.title,
           description: formData.description
@@ -791,12 +789,9 @@ Félicitations pour votre parcours d'apprentissage !`
         // Créer les cours
         for (let i = 0; i < Math.min(formData.coursesCount, templates.courses.length); i++) {
           const course = templates.courses[i];
-          const courseResponse = await fetch('http://localhost:3001/courses', {
+          const courseResponse = await fetch(buildApiUrl('/courses'), {
             method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-              'Authorization': `Bearer ${token}`,
-            },
+            headers: getAuthHeaders(),
             body: JSON.stringify({
               title: course.title,
               content: course.content,
@@ -809,12 +804,9 @@ Félicitations pour votre parcours d'apprentissage !`
             const quiz = templates.quizzes[i];
             
             // Créer le quiz pour ce cours
-            const quizResponse = await fetch('http://localhost:3001/quiz', {
+            const quizResponse = await fetch(buildApiUrl('/quiz'), {
               method: 'POST',
-              headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${token}`,
-              },
+              headers: getAuthHeaders(),
               body: JSON.stringify({
                 title: quiz.title,
                 courseId: courseData.id
@@ -826,12 +818,9 @@ Félicitations pour votre parcours d'apprentissage !`
               
               // Créer les questions et options
               for (const question of quiz.questions) {
-                const questionResponse = await fetch('http://localhost:3001/questions', {
+                const questionResponse = await fetch(buildApiUrl('/questions'), {
                   method: 'POST',
-                  headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${token}`,
-                  },
+                  headers: getAuthHeaders(),
                   body: JSON.stringify({
                     text: question.text,
                     quizId: quizData.id
@@ -843,12 +832,9 @@ Félicitations pour votre parcours d'apprentissage !`
                   
                   // Créer les options
                   for (const option of question.options) {
-                    await fetch('http://localhost:3001/options', {
+                    await fetch(buildApiUrl('/options'), {
                       method: 'POST',
-                      headers: {
-                        'Content-Type': 'application/json',
-                        'Authorization': `Bearer ${token}`,
-                      },
+                      headers: getAuthHeaders(),
                       body: JSON.stringify({
                         text: option.text,
                         isCorrect: option.isCorrect,

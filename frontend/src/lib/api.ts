@@ -1,4 +1,4 @@
-const base = process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:3001';
+import { buildApiUrl, getAuthHeaders, API_CONFIG } from '@/lib/config';
 
 class ApiError extends Error {
   constructor(public status: number, message: string) {
@@ -31,7 +31,7 @@ function createHeaders(includeAuth: boolean = true): Record<string, string> {
 
 async function get<T>(path: string): Promise<T> {
   try {
-    const url = `${base}${path}`;
+    const url = buildApiUrl(path);
     console.log('GET Request:', url);
     
     const response = await fetch(url, { 
@@ -64,7 +64,7 @@ async function get<T>(path: string): Promise<T> {
     
     // Erreur de réseau
     if (error instanceof TypeError && error.message.includes('fetch')) {
-      throw new ApiError(0, 'Impossible de se connecter au serveur. Vérifiez que le backend est démarré sur http://localhost:3001');
+      throw new ApiError(0, `Impossible de se connecter au serveur. Vérifiez que le backend est démarré sur ${API_CONFIG.BASE_URL}`);
     }
     
     throw new ApiError(0, 'Erreur de connexion au serveur');
@@ -73,7 +73,7 @@ async function get<T>(path: string): Promise<T> {
 
 async function post<T>(path: string, data: any): Promise<T> {
   try {
-    const url = `${base}${path}`;
+    const url = buildApiUrl(path);
     console.log('POST Request:', url, data);
     
     const response = await fetch(url, {
@@ -106,7 +106,7 @@ async function post<T>(path: string, data: any): Promise<T> {
     
     // Erreur de réseau
     if (error instanceof TypeError && error.message.includes('fetch')) {
-      throw new ApiError(0, 'Impossible de se connecter au serveur. Vérifiez que le backend est démarré sur http://localhost:3001');
+      throw new ApiError(0, `Impossible de se connecter au serveur. Vérifiez que le backend est démarré sur ${API_CONFIG.BASE_URL}`);
     }
     
     throw new ApiError(0, 'Erreur de connexion au serveur');

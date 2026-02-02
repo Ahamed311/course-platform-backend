@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter, useParams } from 'next/navigation';
+import { buildApiUrl, getAuthHeaders } from '@/lib/config';
 import Header from '@/components/Header';
 import Card from '@/components/Card';
 import Button from '@/components/Button';
@@ -36,7 +37,7 @@ function EditModuleContent() {
 
   const loadModule = async () => {
     try {
-      const response = await fetch(`http://localhost:3001/modules/${moduleId}`);
+      const response = await fetch(buildApiUrl(`/modules/${moduleId}`));
       if (!response.ok) {
         throw new Error('Module non trouvé');
       }
@@ -60,13 +61,9 @@ function EditModuleContent() {
     setError('');
 
     try {
-      const token = localStorage.getItem('token');
-      const response = await fetch(`http://localhost:3001/modules/${moduleId}`, {
+      const response = await fetch(buildApiUrl(`/modules/${moduleId}`), {
         method: 'PATCH',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`,
-        },
+        headers: getAuthHeaders(),
         body: JSON.stringify(formData),
       });
 
@@ -89,12 +86,9 @@ function EditModuleContent() {
     
     if (confirm(confirmMessage)) {
       try {
-        const token = localStorage.getItem('token');
-        const response = await fetch(`http://localhost:3001/modules/${moduleId}`, {
+        const response = await fetch(buildApiUrl(`/modules/${moduleId}`), {
           method: 'DELETE',
-          headers: {
-            'Authorization': `Bearer ${token}`,
-          },
+          headers: getAuthHeaders(),
         });
 
         if (!response.ok) {
